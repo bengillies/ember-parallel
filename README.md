@@ -80,8 +80,8 @@ Note that the function fib needs to be named in order to deal with recursion, an
 
 		total: Em.computed.parallel.reduce('list', function (list) {
 			return list[0] + list[1];
-		}).property('list.[]')
-	}, 0);
+		}, 0).property('list.[]')
+	});
 ```
 
 `Em.computed.reduce` takes property name to reduce on, a reducer function (note that the same restrictions as `Em.computed.parallel.map` apply), and a default initial value (in this case case 0. The reducer function take a list of two elements as the argument.
@@ -97,7 +97,7 @@ Note that the function fib needs to be named in order to deal with recursion, an
 			}).reduce(function(total, d) {
 				return d + total;
 			}, 0);
-		}).property('list.[]')
-	}, 0);
+		}, 0).property('list.[]')
+	});
 ```
 `Em.computed.parallel.spawn` takes the same set of arguments as `Em.computed.parallel.reduce`, but simply passes the whole lot into a web worker for you to operate on as you please (again, the same restrictions apply). This is useful for operations that do no fit cleanly into parallel map/reduce but that still need to be done in the background.
