@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ember-Parallel: Computed Property Promises + Parallel.js</title>
+		<link rel="stylesheet" href="main.css">
+	</head>
+	<body>
+		<script type="text/x-handlebars">
+			<h1>Ember-Parallel: Computed Property Promises + Parallel.js</h1>
+
+			{{outlet}}
+		</script>
+
+		<script type="text/x-handlebars" data-template-name="index">
+			<dl>
+				<dt>total</dt>
+				<dd>{{sum}}</dd>
+				<dt>count</dt>
+				<dd>{{counter}}</dd>
+				<dt>fibs</dt>
+				<dd>{{fibString}}</dd>
+				<dt>fac total</dt>
+				<dd>{{facTotal.data}}</dd>
+				<dt>fib total</dt>
+				<dd>{{fibTotal}}</dd>
+			</dl>
+		</script>
+
+		<script src="jquery.min.js"></script>
+		<script src="handlebars-v1.1.2.js"></script>
+		<script src="ember.min.js"></script>
+		<script src="parallel.js"></script>
+		<script src="../build/ember-parallel.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>

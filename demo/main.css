@@ -1,0 +1,19 @@
+html, body {
+	margin: 20px;
+}
+
+dt {
+	float: left;
+	width: 100px;
+}
+
+dt::after {
+	content: ":";
+}
+
+dd {
+	width: 300px;
+	text-align: right;
+	margin-bottom: 10px;
+	display: block;
+}
