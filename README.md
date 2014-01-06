@@ -3,7 +3,7 @@ Ember-Parallel
 
 An Ember.js plugin proving integration with Parallel.js
 
-This plugin allows you to run code inside web workers in the browser (i.e. in background threads) and access the results easily within your ember app. This is particularly useful when you're dealing with large quantities or data, or computationally expensive algorithms within your app that would otherwise lock up the browser for a period of time.
+This plugin allows you to run code inside web workers in the browser (i.e. in background threads) and access the results easily within your ember app. This is particularly useful when you're dealing with large quantities of data, or computationally expensive algorithms within your app that would otherwise lock up the browser for a period of time.
 
 Requires
 --------
