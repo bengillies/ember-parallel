@@ -35,6 +35,13 @@ Ember-Parallel wraps [Parallel.js](http://adambom.github.io/parallel.js/) and ma
 Computed promises let you use promises as if they were computed properties. This means that you can create computed properties in an asynchronous manner and have them update asynchronously when dependencies change. Use them as follows:
 
 ```javascript
+	Em.computed.promise([defaultValue], func)
+```
+
+`defaultValue` is optional and provides a value until the promise resolves
+`func` is a function that returns a promise
+
+```javascript
 App.Foo = Em.Object.extend({
 	currentPage: 1,
 
@@ -54,6 +61,14 @@ As Ember-Parallel uses Web Workers, it needs to serialise Ember objects into pla
 
 `Em.JSONify` is also provided, and converts any JS object (whether Ember or already a POJO) into a POJO.
 
+```javsacript
+	var obj = Em.Object.create({ foo: 1 });
+
+	obj.toJSON();
+
+	Em.JSONify(obj);
+```
+
 ###Parallel Computed Properties
 
 Ember-Parallel provides some convenience wrappers around ParallelJS to help you work with web workers inside Ember.
@@ -61,6 +76,13 @@ Ember-Parallel provides some convenience wrappers around ParallelJS to help you 
 The following computed properties are provided by default:
 
 ####Em.computed.parallel.map
+
+```javascript
+	Em.computed.parallel.map(propName, func);
+```
+`propName` is the name of the property containing the list that you want to map over
+`func` is a function that takes a single element of the list and transforms it is some way
+
 ```javascript
 	App.foo = Em.Object.extend({
 		list: [40, 41, 42],
@@ -74,6 +96,14 @@ The following computed properties are provided by default:
 Note that the function fib needs to be named in order to deal with recursion, and that it cannot reference anything Ember related, or anything outside of the function itself. THis is because the function is run inside a separate thread, so has no access to any other JS present outside that thread.
 
 ####Em.computed.parallel.reduce
+
+```javascript
+	Em.computed.parallel.reduce(propName, func, initValue)
+```
+`propName` is the name of the property containing the list that you want to reduce
+`func` is a function that takes a list containing two elements from the original list and returns a reduced value
+`initValue` is a default value to use until the reduce function completes
+
 ```javascript
 	App.foo = Em.Object.extend({
 		list: [40, 41, 42],
@@ -87,6 +117,14 @@ Note that the function fib needs to be named in order to deal with recursion, an
 `Em.computed.reduce` takes property name to reduce on, a reducer function (note that the same restrictions as `Em.computed.parallel.map` apply), and a default initial value (in this case case 0. The reducer function take a list of two elements as the argument.
 
 ####Em.computed.parallel.spawn
+
+```javascript
+	Em.computed.parallel.spawn(propName, func, initValue)
+```
+`propName` is the name of the property containing the data that you want to work with
+`func` is a function that takes all of the data in `propName` and returns a completed value
+`initValue` is a default value to use until the spawn function completes
+
 ```javascript
 	App.foo = Em.Object.extend({
 		list: [40, 41, 42],
