@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 				' */\n\n'
 		},
 
-		clean: ['dist', 'build'],
+		clean: ['build'],
 
 		watch: {
 			files: 'src/**',
