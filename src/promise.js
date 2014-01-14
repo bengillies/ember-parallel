@@ -1,10 +1,11 @@
-Em.computed.promise = function(defaultValue, fn) {
-	if (typeof fn == 'undefined') {
-		fn = defaultValue;
-		defaultValue = undefined;
-	}
+Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
+	var defaultValue = arguments[arguments.length - 1],
+		fnPos = arguments.length - (typeof defaultValue == 'function' ? 1 : 2),
+		args = [].slice.call(arguments, 0, arguments.length - 2),
+		fn = arguments[fnPos];
+	defaultValue = arguments[fnPos + 1];
 
-	return Em.computed(function(propertyName, value) {
+	var computedPromise = function(propertyName, value) {
 		if (arguments.length == 2) {
 			return value;
 		}
@@ -22,5 +23,9 @@ Em.computed.promise = function(defaultValue, fn) {
 			}));
 
 		return defaultValue;
-	});
+	};
+
+	args.push(computedPromise);
+
+	return Em.computed.apply(Em.computed, args);
 };

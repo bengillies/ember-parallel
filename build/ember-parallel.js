@@ -1,5 +1,5 @@
 /**
- * ember-parallel - v0.0.1
+ * ember-parallel - v0.0.2
  * Copyright: 2014 Ben Gillies
  * License: BSD License (see https://raw.github.com/bengillies/ember-parallel/master/LICENSE)
  */
@@ -52,32 +52,34 @@ Em.JSONify = function(obj) {
 Em.computed.parallel = {
 
 	map: function(data, fn) {
-		return Em.computed.promise([], function() {
+		return Em.computed.promise(data + '.[]', function() {
 			return new Parallel(Em.JSONify(this.get(data))).map(fn);
-		});
+		}, []);
 	},
 
 	reduce: function(data, fn, initValue) {
-		return Em.computed.promise(initValue, function() {
+		return Em.computed.promise(data + '.[]', function() {
 			return new Parallel(Em.JSONify(this.get(data))).reduce(fn);
-		});
+		}, initValue);
 	},
 
 	spawn: function(data, fn, initValue) {
-		return Em.computed.promise(initValue, function() {
+		data = data.replace(/(\.\[\]|\.@each.*)$/, '');
+		return Em.computed.promise(data, function() {
 			return new Parallel(Em.JSONify(this.get(data))).spawn(fn);
-		});
+		}, initValue);
 	}
 
 };
 
-Em.computed.promise = function(defaultValue, fn) {
-	if (typeof fn == 'undefined') {
-		fn = defaultValue;
-		defaultValue = undefined;
-	}
+Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
+	var defaultValue = arguments[arguments.length - 1],
+		fnPos = arguments.length - (typeof defaultValue == 'function' ? 1 : 2),
+		args = [].slice.call(arguments, 0, arguments.length - 2),
+		fn = arguments[fnPos];
+	defaultValue = arguments[fnPos + 1];
 
-	return Em.computed(function(propertyName, value) {
+	var computedPromise = function(propertyName, value) {
 		if (arguments.length == 2) {
 			return value;
 		}
@@ -95,5 +97,9 @@ Em.computed.promise = function(defaultValue, fn) {
 			}));
 
 		return defaultValue;
-	});
+	};
+
+	args.push(computedPromise);
+
+	return Em.computed.apply(Em.computed, args);
 };

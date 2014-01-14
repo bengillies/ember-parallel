@@ -12,14 +12,14 @@ App.IndexRoute = Ember.Route.extend({
 
 App.IndexController = Em.ArrayController.extend({
 
-	promisified: Em.computed.promise([], function() {
+	promisified: Em.computed.promise('@each', function() {
 		var self = this;
 		return new Em.RSVP.Promise(function(resolve) {
 			Em.run.later(function() {
 				resolve(self.get('model'));
 			}, 2000);
 		});
-	}).property('@each'),
+	}, []),
 
 	sum: Em.computed(function() {
 		return this.get('promisified').reduce(function(acc, num) {
@@ -29,7 +29,7 @@ App.IndexController = Em.ArrayController.extend({
 
 	fibs: Em.computed.parallel.map('model', function fib(n) {
 		return n < 2 ? 1 : fib(n - 1) + fib(n - 2);
-	}).property('model.[]'),
+	}),
 
 	fibString: Em.computed(function() {
 		return this.get('fibs').join(', ') || 'working...';
@@ -49,11 +49,11 @@ App.IndexController = Em.ArrayController.extend({
 				return acc + res;
 			}, 0)
 		};
-	}, { data: 0 }).property('model.[]'),
+	}, { data: 0 }),
 
-	fibTotal: Em.computed.parallel.spawn('fibs', function(fibs) {
+	fibTotal: Em.computed.parallel.spawn('fibs.[]', function(fibs) {
 		return fibs.reduce(function(acc, t) { return acc + t; }, 0);
-	}).property('fibs.[]'),
+	}),
 
 	timer: function() {
 		var self = this;
