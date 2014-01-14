@@ -35,23 +35,24 @@ Ember-Parallel wraps [Parallel.js](http://adambom.github.io/parallel.js/) and ma
 Computed promises let you use promises as if they were computed properties. This means that you can create computed properties in an asynchronous manner and have them update asynchronously when dependencies change. Use them as follows:
 
 ```javascript
-Em.computed.promise([defaultValue], func)
+Em.computed.promise([deps...], func, [defaultValue])
 ```
 
-`defaultValue` is optional and provides a value until the promise resolves
+`deps` are optional and specify dependencies for your promise
 `func` is a function that returns a promise
+`defaultValue` is optional and provides a value until the promise resolves
 
 ```javascript
 App.Foo = Em.Object.extend({
 	currentPage: 1,
 
-	pageContents: Em.computed.promise([], function() {
+	pageContents: Em.computed.promise('currentPage', function() {
 		return $.getJSON('/api/todos?page=' + this.get('currentPage'));
-	}).property('currentPage')
+	}, [])
 });
 ```
 
-`pageContents` can then be used as a regular computed property, with the first argument (`[]`) becoming the initial default value. When the promise has resolved, `pageContents will take on the fulfilled value of the promise.
+`pageContents` can then be used as a regular computed property, with the last argument (`[]`) becoming the initial default value. When the promise has resolved, `pageContents will take on the fulfilled value of the promise.
 
 The promise itself is also available at `pageContentsPromise`.
 
@@ -89,11 +90,11 @@ App.foo = Em.Object.extend({
 
 	fibs: Em.computed.parallel.map('list', function fib(n) {
 		return n < 2 ? 1 : fib(n - 1) + fib(n - 2);
-	}).property('list.[]')
+	})
 });
 ```
 
-Note that the function fib needs to be named in order to deal with recursion, and that it cannot reference anything Ember related, or anything outside of the function itself. THis is because the function is run inside a separate thread, so has no access to any other JS present outside that thread.
+Note that the function fib needs to be named in order to deal with recursion, and that it cannot reference anything Ember related, or anything outside of the function itself. This is because the function is run inside a separate thread, so has no access to any other JS present outside that thread.
 
 ####Em.computed.parallel.reduce
 
@@ -110,7 +111,7 @@ App.foo = Em.Object.extend({
 
 	total: Em.computed.parallel.reduce('list', function (list) {
 		return list[0] + list[1];
-	}, 0).property('list.[]')
+	}, 0)
 });
 ```
 
@@ -119,23 +120,23 @@ App.foo = Em.Object.extend({
 ####Em.computed.parallel.spawn
 
 ```javascript
-Em.computed.parallel.spawn(propName, func, initValue)
+Em.computed.parallel.spawn(dep, func, initValue)
 ```
-`propName` is the name of the property containing the data that you want to work with
-`func` is a function that takes all of the data in `propName` and returns a completed value
+`dep` is the dependency that your spawn function relies on. `func` will be passed this dependency as an argument
+`func` is a function that takes all of the data in `dep` and returns a completed value
 `initValue` is a default value to use until the spawn function completes
 
 ```javascript
 App.foo = Em.Object.extend({
 	list: [40, 41, 42],
 
-	total: Em.computed.parallel.spawn('list', function (list) {
+	total: Em.computed.parallel.spawn('list.[]', function (list) {
 		return list.map(function(d) {
 			return d * 2;
 		}).reduce(function(total, d) {
 			return d + total;
 		}, 0);
-	}, 0).property('list.[]')
+	}, 0)
 });
 ```
-`Em.computed.parallel.spawn` takes the same set of arguments as `Em.computed.parallel.reduce`, but simply passes the whole lot into a web worker for you to operate on as you please (again, the same restrictions apply). This is useful for operations that do no fit cleanly into parallel map/reduce but that still need to be done in the background.
+`Em.computed.parallel.spawn` is useful for operations that do no fit cleanly into parallel map/reduce but that still need to be done in the background. It runs the given function inside it's own web worker for you to do whatever you like with (e.g. sorting a list).
