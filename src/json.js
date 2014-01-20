@@ -3,7 +3,7 @@ Em.Object.reopen({
 		var v, ret = [], recursed = {};
 		if (this.toArray) {
 			return this.toArray().map(function(d) {
-				return d && d.toJSON ? d.toJSON : d;
+				return d && d.toJSON ? d.toJSON() : d;
 			});
 		}
 		for (var key in this) {
