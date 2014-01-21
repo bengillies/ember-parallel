@@ -8,6 +8,14 @@
 		}
 	}
 
+	function wrapPromise(promise) {
+		return new Em.RSVP.Promise(function(resolve) {
+			promise.then(function(data) {
+				resolve(data);
+			});
+		});
+	}
+
 	Em.computed.parallel = {
 
 		map: function(data, fn) {
@@ -16,7 +24,7 @@
 
 				requireDependencies(this, parallel);
 
-				return parallel.map(fn);
+				return wrapPromise(parallel.map(fn));
 			}, []);
 		},
 
@@ -26,18 +34,18 @@
 
 				requireDependencies(this, parallel);
 
-				return parallel.reduce(fn);
+				return wrapPromise(parallel.reduce(fn));
 			}, initValue);
 		},
 
-		spawn: function(data, fn, initValue) {
-			data = data.replace(/(\.\[\]|\.@each.*)$/, '');
-			return Em.computed.promise(data, function() {
+		spawn: function(dependency, fn, initValue) {
+			var data = dependency.replace(/(\.\[\]|\.@each.*)$/, '');
+			return Em.computed.promise(dependency, function() {
 				var parallel = new Parallel(Em.JSONify(this.get(data)));
 
 				requireDependencies(this, parallel);
 
-				return parallel.spawn(fn);
+				return wrapPromise(parallel.spawn(fn));
 			}, initValue);
 		}
 
