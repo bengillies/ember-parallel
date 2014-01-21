@@ -10,7 +10,9 @@ Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
 			return value;
 		}
 
-		var self = this;
+		var self = this,
+			currentValue = this.get(propertyName + 'Promise.fulfillmentValue');
+
 		self.set(propertyName + 'Promise',
 			new Em.RSVP.Promise(function(resolve, reject) {
 				resolve(fn.call(self));
@@ -22,7 +24,7 @@ Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
 				return data;
 			}));
 
-		return defaultValue;
+		return currentValue == null ? defaultValue : currentValue;
 	};
 
 	args.push(computedPromise);
