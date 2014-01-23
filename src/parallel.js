@@ -16,21 +16,26 @@
 		});
 	}
 
+	Em.parallelConfig = {
+		maxWorkers: 4,
+		evalPath: null
+	};
+
 	Em.computed.parallel = {
 
-		map: function(data, fn) {
+		map: function(data, fn, initValue) {
 			return Em.computed.promise(data + '.[]', function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 
 				return wrapPromise(parallel.map(fn));
-			}, []);
+			}, initValue);
 		},
 
 		reduce: function(data, fn, initValue) {
 			return Em.computed.promise(data + '.[]', function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 
@@ -41,7 +46,7 @@
 		spawn: function(dependency, fn, initValue) {
 			var data = dependency.replace(/(\.\[\]|\.@each.*)$/, '');
 			return Em.computed.promise(dependency, function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 

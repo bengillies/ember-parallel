@@ -67,21 +67,26 @@ Em.JSONify = function(obj) {
 		});
 	}
 
+	Em.parallelConfig = {
+		maxWorkers: 4,
+		evalPath: null
+	};
+
 	Em.computed.parallel = {
 
-		map: function(data, fn) {
+		map: function(data, fn, initValue) {
 			return Em.computed.promise(data + '.[]', function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 
 				return wrapPromise(parallel.map(fn));
-			}, []);
+			}, initValue);
 		},
 
 		reduce: function(data, fn, initValue) {
 			return Em.computed.promise(data + '.[]', function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 
@@ -92,7 +97,7 @@ Em.JSONify = function(obj) {
 		spawn: function(dependency, fn, initValue) {
 			var data = dependency.replace(/(\.\[\]|\.@each.*)$/, '');
 			return Em.computed.promise(dependency, function() {
-				var parallel = new Parallel(Em.JSONify(this.get(data)));
+				var parallel = new Parallel(Em.JSONify(this.get(data)), Em.parallelConfig);
 
 				requireDependencies(this, parallel);
 
@@ -116,9 +121,7 @@ Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
 			return value;
 		}
 
-		var self = this,
-			currentValue = this.get(propertyName + 'Promise.fulfillmentValue');
-
+		var self = this;
 		self.set(propertyName + 'Promise',
 			new Em.RSVP.Promise(function(resolve, reject) {
 				resolve(fn.call(self));
@@ -130,7 +133,7 @@ Em.computed.promise = function(/*deps..., fn, defaultValue*/) {
 				return data;
 			}));
 
-		return currentValue == null ? defaultValue : currentValue;
+		return defaultValue;
 	};
 
 	args.push(computedPromise);
