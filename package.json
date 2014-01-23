@@ -1,6 +1,6 @@
 {
   "name": "ember-parallel",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "main": "Gruntfile.js",
   "repository": "https://github.com/bengillies/ember-parallel.git",
   "license": "BSD",
