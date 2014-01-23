@@ -79,10 +79,11 @@ The following computed properties are provided by default:
 ####Em.computed.parallel.map
 
 ```javascript
-Em.computed.parallel.map(propName, func);
+Em.computed.parallel.map(propName, func, initValue);
 ```
 `propName` is the name of the property containing the list that you want to map over
 `func` is a function that takes a single element of the list and transforms it is some way
+`initValue` is returned when the map is running in the background
 
 ```javascript
 App.foo = Em.Object.extend({
@@ -140,3 +141,34 @@ App.foo = Em.Object.extend({
 });
 ```
 `Em.computed.parallel.spawn` is useful for operations that do no fit cleanly into parallel map/reduce but that still need to be done in the background. It runs the given function inside it's own web worker for you to do whatever you like with (e.g. sorting a list).
+
+###Em.parallelConfig
+
+```javascript
+Em.parallelConfig = {
+	maxWorkers: 4,
+	evalPath: null
+};
+```
+
+Set up some default config to be passed through to each created ParallelJS instance. Options and defaults are [the same as for paralleljs](http://adambom.github.io/parallel.js/#constructor). To use ember-parallel in IE, you'll need to grab eval.js from parallel.js and set `evalPath` here to its location.
+
+###parallelDependencies
+
+```javascript
+App.foo = Em.Object.extend({
+	list: [40, 41, 42],
+
+	parallelDependencies: {
+		fib: function(n) {
+			return n < 2 ? 1 : fib(n - 1) + fib(n - 2);
+		}
+	}
+
+	fibs: Em.computed.parallel.map('list', function(n) {
+		return fib(n);
+	}
+});
+```
+
+`parallelDependencies` is a list of name/function pairs that you define on an Ember object. Any functions you define here will be available to you inside your Em.computed.parallel functions.
