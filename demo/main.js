@@ -29,7 +29,7 @@ App.IndexController = Em.ArrayController.extend({
 
 	fibs: Em.computed.parallel.map('model', function fib(n) {
 		return n < 2 ? 1 : fib(n - 1) + fib(n - 2);
-	}),
+	}, []),
 
 	fibString: Em.computed(function() {
 		return this.get('fibs').join(', ') || 'working...';
