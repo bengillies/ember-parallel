@@ -30,7 +30,7 @@ Usage
 
 Ember-Parallel wraps [Parallel.js](http://adambom.github.io/parallel.js/) and makes it usable with Ember.js. To do this, it provides a few things:
 
-###Computed Promises
+### Computed Promises
 
 Computed promises let you use promises as if they were computed properties. This means that you can create computed properties in an asynchronous manner and have them update asynchronously when dependencies change. Use them as follows:
 
@@ -56,7 +56,7 @@ App.Foo = Em.Object.extend({
 
 The promise itself is also available at `pageContentsPromise`.
 
-###Em.JSONify
+### Em.JSONify
 
 As Ember-Parallel uses Web Workers, it needs to serialise Ember objects into plain old javaScript objects (POJOs). To do this, it expects every object to have a `toJSON` method on it. It provides a basic `toJSON` method with can then be replaced with custom, improved methods in your own code.
 
@@ -70,13 +70,13 @@ obj.toJSON();
 Em.JSONify(obj);
 ```
 
-###Parallel Computed Properties
+### Parallel Computed Properties
 
 Ember-Parallel provides some convenience wrappers around ParallelJS to help you work with web workers inside Ember.
 
 The following computed properties are provided by default:
 
-####Em.computed.parallel.map
+#### Em.computed.parallel.map
 
 ```javascript
 Em.computed.parallel.map(propName, func, initValue);
@@ -97,7 +97,7 @@ App.foo = Em.Object.extend({
 
 Note that the function fib needs to be named in order to deal with recursion, and that it cannot reference anything Ember related, or anything outside of the function itself. This is because the function is run inside a separate thread, so has no access to any other JS present outside that thread.
 
-####Em.computed.parallel.reduce
+#### Em.computed.parallel.reduce
 
 ```javascript
 Em.computed.parallel.reduce(propName, func, initValue)
@@ -118,7 +118,7 @@ App.foo = Em.Object.extend({
 
 `Em.computed.reduce` takes property name to reduce on, a reducer function (note that the same restrictions as `Em.computed.parallel.map` apply), and a default initial value (in this case case 0. The reducer function take a list of two elements as the argument.
 
-####Em.computed.parallel.spawn
+#### Em.computed.parallel.spawn
 
 ```javascript
 Em.computed.parallel.spawn(dep, func, initValue)
@@ -142,7 +142,7 @@ App.foo = Em.Object.extend({
 ```
 `Em.computed.parallel.spawn` is useful for operations that do no fit cleanly into parallel map/reduce but that still need to be done in the background. It runs the given function inside it's own web worker for you to do whatever you like with (e.g. sorting a list).
 
-###Em.parallelConfig
+### Em.parallelConfig
 
 ```javascript
 Em.parallelConfig = {
@@ -153,7 +153,7 @@ Em.parallelConfig = {
 
 Set up some default config to be passed through to each created ParallelJS instance. Options and defaults are [the same as for paralleljs](http://adambom.github.io/parallel.js/#constructor). To use ember-parallel in IE, you'll need to grab eval.js from parallel.js and set `evalPath` here to its location.
 
-###parallelDependencies
+### parallelDependencies
 
 ```javascript
 App.foo = Em.Object.extend({
